@@ -14,6 +14,31 @@ You can read the full explanation in the article:
 
 → [Overengineering a Factorial. Part 1, The ALU.](#)*(link coming soon)*
 
+### ALU Specification v0.1
+
+
+**Inputs**:
+  A[16:0], B[16:0], 
+  F[3:0]
+
+**Outputs**:
+  Result[16:0]
+
+**Operations:**
+| OpCode| ALU function |
+|-----|--------------|
+| 000 | A AND B      |
+| 001 | A OR B       |
+| 010 | A+B          |
+| 011 | Not used     |
+| 100 | A AND NOT(B) |
+| 101 | A OR NOT(B)  |
+| 110 | A - B        |
+| 111 | SLT          |
+
+**Latency:**
+  1 cycle
+
 ## Circuit Preview
 
 The ALU subcircuit:
