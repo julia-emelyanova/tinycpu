@@ -1073,7 +1073,7 @@ e0102 a0000 e0101 c0100 10000 a0000
     <a name="appearance" val="logisim_evolution"/>
     <a name="circuit" val="new_main"/>
     <a name="circuitnamedboxfixedsize" val="true"/>
-    <a name="simulationFrequency" val="128000.0"/>
+    <a name="simulationFrequency" val="8.0"/>
     <comp lib="0" loc="(1230,1030)" name="Bit Extender">
       <a name="in_width" val="1"/>
       <a name="type" val="zero"/>

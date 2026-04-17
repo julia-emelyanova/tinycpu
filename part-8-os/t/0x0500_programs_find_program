@@ -1,0 +1,197 @@
+START_ADDRESS: 0x0500 
+Input assembly 
+FUNC_CALL_PROG:
+	;store the pointer to the beginning of the program lib to a variable
+    LOADIA $PROGRAM_LIB_START_ADDRESS
+    STOREA $PROGRAM_LIB_CUR_ADDRESS
+    ;store the pointer to the beginning of the buffer to a variable
+    LOADIA $BUFFER_START
+    STOREA $CUR_BUFFER_ADDRESS
+    _CALL_PROG_COMP:
+	    ;load a symbol from library to A 
+        ;and a symbol from user input to B
+        ;we need to use temp variable
+	    LOADB $PROGRAM_LIB_CUR_ADDRESS
+	    LOADAIND 
+        STOREA $TMP
+	    LOADB $CUR_BUFFER_ADDRESS
+	    LOADAIND 
+	    LOADB $TMP
+	    ;compare
+		SUB
+		;if A==0 then the symbols match and we need to read next symbol
+		;otherwise skip to next program name in a program library
+		JZ _CALL_PROG_COMP_NEXT
+_CALL_PROG_SKIP_TO_END_OF_PROG_NAME:
+    CALL FUNC_SUB_CALL_PROG_INC_LIB_PNTR
+    CALL FUNC_SUB_CALL_PROG_CHECK_LF
+    ;if A==0 then we reached the end of the program name in a lib
+    ;and we need to skip 1 symbol (an address of the program start)
+    ;and check if the table has ended
+    ;otherwise increase a pointer further
+    JZ _CALL_PROG_CHECK_PROG_LIB_END
+    LOADIA 0
+    JZ _CALL_PROG_SKIP_TO_END_OF_PROG_NAME
+_CALL_PROG_CHECK_PROG_LIB_END:
+    ;skip an address of the program start
+	CALL FUNC_SUB_CALL_PROG_INC_LIB_PNTR
+	CALL FUNC_SUB_CALL_PROG_INC_LIB_PNTR
+	;now we’re pointing at the name address OR a table end
+    CALL FUNC_SUB_CALL_PROG_CHECK_LF
+    ;if A==0 then we need reached the table end
+    ;we didn’t find any programs
+    JZ _CALL_PROG_NOT_FOUND
+    ;otherwise we need to check user input once again 
+    ;reset buffer pointer
+    LOADIA $BUFFER_START
+    STOREA $CUR_BUFFER_ADDRESS
+    LOADIA 0
+    JZ _CALL_PROG_COMP
+_CALL_PROG_COMP_NEXT:
+    ;check if current symbol is a line feed
+    CALL FUNC_SUB_CALL_PROG_CHECK_LF
+    ;if A==0, then we found our program. Otherwise increase counters to check the nex symbol
+    JZ _CALL_PROG_FOUND
+    ;increase an address of a program library pointer
+    CALL FUNC_SUB_CALL_PROG_INC_LIB_PNTR
+    ;increase an address of a buffer pointer
+    CALL FUNC_SUB_CALL_PROG_INC_BUF_PNTR
+    LOADIA 0
+    JZ _CALL_PROG_COMP
+_CALL_PROG_FOUND:
+    ;increase an address of a program library pointer
+    CALL FUNC_SUB_CALL_PROG_INC_LIB_PNTR
+	;next cell of the program lib contains an address of the program in ROM
+    ;load an address of the program into A
+	LOADB $PROGRAM_LIB_CUR_ADDRESS 
+    LOADAIND 
+	RET
+_CALL_PROG_NOT_FOUND:
+    LOADIA 0
+    RET
+FUNC_SUB_CALL_PROG_INC_LIB_PNTR:
+    LOADA $PROGRAM_LIB_CUR_ADDRESS 
+    LOADIB 1
+    ADD
+    STOREA $PROGRAM_LIB_CUR_ADDRESS
+    RET
+FUNC_SUB_CALL_PROG_INC_BUF_PNTR:
+    LOADA $CUR_BUFFER_ADDRESS
+    LOADIB 1
+    ADD
+    STOREA $CUR_BUFFER_ADDRESS
+    RET
+;a function to check if the symbol, that $PROGRAM_LIB_CUR_ADDRESS points to
+;is a LF. 
+;return 0 if it is, otherwise it's not
+FUNC_SUB_CALL_PROG_CHECK_LF:
+    LOADB $PROGRAM_LIB_CUR_ADDRESS
+    LOADAIND
+    LOADIB LF
+    SUB
+    RET
+
+
+
+SECTION 1: RAM_MAP
+$PROGRAM_LIB_START_ADDRESS = 0xBE
+$PROGRAM_LIB_CUR_ADDRESS = 0xBD
+$CUR_BUFFER_ADDRESS = 0xBC
+$TMP = 0xBB
+$BUFFER_START = 0xF0
+
+SECTION 2: FUNCTION_ADDRESSES
+FUNC_CALL_PROG = 0x0500
+
+SECTION 2: ASSEMBLY CODE WITH COMMENTS
+
+; FUNC_CALL_PROG
+;store the pointer to the beginning of the program lib to a variable
+0x0500 0100BE ; LOADIA $PROGRAM_LIB_START_ADDRESS; LOADIA 0xBE
+0x0501 0C00BD ; STOREA $PROGRAM_LIB_CUR_ADDRESS; STOREA 0xBD
+;store the pointer to the beginning of the buffer to a variable
+0x0502 0100F0 ; LOADIA $BUFFER_START; LOADIA 0xF0
+0x0503 0C00BC ; STOREA $CUR_BUFFER_ADDRESS; STOREA 0xBC
+;load a symbol from library to A
+;and a symbol from user input to B
+;we need to use temp variable
+0x0504 0F00BD ; LOADB $PROGRAM_LIB_CUR_ADDRESS; LOADB 0xBD
+0x0505 100000 ; LOADAIND; LOADAIND
+0x0506 0C00BB ; STOREA $TMP; STOREA 0xBB
+0x0507 0F00BC ; LOADB $CUR_BUFFER_ADDRESS; LOADB 0xBC
+0x0508 100000 ; LOADAIND; LOADAIND
+0x0509 0F00BB ; LOADB $TMP; LOADB 0xBB
+;compare
+0x050A 080000 ; SUB; SUB
+;if A==0 then the symbols match and we need to read next symbol
+;otherwise skip to next program name in a program library
+0x050B 0A0519 ; JZ _CALL_PROG_COMP_NEXT; JZ 0x0519
+0x050C 120525 ; CALL FUNC_SUB_CALL_PROG_INC_LIB_PNTR; CALL 0x0525
+0x050D 12052F ; CALL FUNC_SUB_CALL_PROG_CHECK_LF; CALL 0x052F
+;if A==0 then we reached the end of the program name in a lib
+;and we need to skip 1 symbol (an address of the program start)
+;and check if the table has ended
+;otherwise increase a pointer further
+0x050E 0A0511 ; JZ _CALL_PROG_CHECK_PROG_LIB_END; JZ 0x0511
+0x050F 010000 ; LOADIA 0; LOADIA 0
+0x0510 0A050C ; JZ _CALL_PROG_SKIP_TO_END_OF_PROG_NAME; JZ 0x050C
+;skip an address of the program start
+0x0511 120525 ; CALL FUNC_SUB_CALL_PROG_INC_LIB_PNTR; CALL 0x0525
+0x0512 120525 ; CALL FUNC_SUB_CALL_PROG_INC_LIB_PNTR; CALL 0x0525
+;now we’re pointing at the name address OR a table end
+0x0513 12052F ; CALL FUNC_SUB_CALL_PROG_CHECK_LF; CALL 0x052F
+;if A==0 then we need reached the table end
+;we didn’t find any programs
+0x0514 0A0523 ; JZ _CALL_PROG_NOT_FOUND; JZ 0x0523
+;otherwise we need to check user input once again
+;reset buffer pointer
+0x0515 0100F0 ; LOADIA $BUFFER_START; LOADIA 0xF0
+0x0516 0C00BC ; STOREA $CUR_BUFFER_ADDRESS; STOREA 0xBC
+0x0517 010000 ; LOADIA 0; LOADIA 0
+0x0518 0A0504 ; JZ _CALL_PROG_COMP; JZ 0x0504
+;check if current symbol is a line feed
+0x0519 12052F ; CALL FUNC_SUB_CALL_PROG_CHECK_LF; CALL 0x052F
+;if A==0, then we found our program. Otherwise increase counters to check the nex symbol
+0x051A 0A051F ; JZ _CALL_PROG_FOUND; JZ 0x051F
+;increase an address of a program library pointer
+0x051B 120525 ; CALL FUNC_SUB_CALL_PROG_INC_LIB_PNTR; CALL 0x0525
+;increase an address of a buffer pointer
+0x051C 12052A ; CALL FUNC_SUB_CALL_PROG_INC_BUF_PNTR; CALL 0x052A
+0x051D 010000 ; LOADIA 0; LOADIA 0
+0x051E 0A0504 ; JZ _CALL_PROG_COMP; JZ 0x0504
+;increase an address of a program library pointer
+0x051F 120525 ; CALL FUNC_SUB_CALL_PROG_INC_LIB_PNTR; CALL 0x0525
+;next cell of the program lib contains an address of the program in ROM
+;load an address of the program into A
+0x0520 0F00BD ; LOADB $PROGRAM_LIB_CUR_ADDRESS; LOADB 0xBD
+0x0521 100000 ; LOADAIND; LOADAIND
+0x0522 130000 ; RET; RET
+0x0523 010000 ; LOADIA 0; LOADIA 0
+0x0524 130000 ; RET; RET
+; FUNC_SUB_CALL_PROG_INC_LIB_PNTR
+0x0525 0E00BD ; LOADA $PROGRAM_LIB_CUR_ADDRESS; LOADA 0xBD
+0x0526 020001 ; LOADIB 1; LOADIB 1
+0x0527 050000 ; ADD; ADD
+0x0528 0C00BD ; STOREA $PROGRAM_LIB_CUR_ADDRESS; STOREA 0xBD
+0x0529 130000 ; RET; RET
+; FUNC_SUB_CALL_PROG_INC_BUF_PNTR
+0x052A 0E00BC ; LOADA $CUR_BUFFER_ADDRESS; LOADA 0xBC
+0x052B 020001 ; LOADIB 1; LOADIB 1
+0x052C 050000 ; ADD; ADD
+0x052D 0C00BC ; STOREA $CUR_BUFFER_ADDRESS; STOREA 0xBC
+0x052E 130000 ; RET; RET
+;a function to check if the symbol, that $PROGRAM_LIB_CUR_ADDRESS points to
+;is a LF.
+;return 0 if it is, otherwise it's not
+; FUNC_SUB_CALL_PROG_CHECK_LF
+0x052F 0F00BD ; LOADB $PROGRAM_LIB_CUR_ADDRESS; LOADB 0xBD
+0x0530 100000 ; LOADAIND; LOADAIND
+0x0531 02000A ; LOADIB LF; LOADIB 10
+0x0532 080000 ; SUB; SUB
+0x0533 130000 ; RET; RET
+
+SECTION 3: HEX STRING OF THE ASSEMBLY CODE
+
+START_ADDRESS: 0500
+
+0100BE 0C00BD 0100F0 0C00BC 0F00BD 100000 0C00BB 0F00BC 100000 0F00BB 080000 0A0519 120525 12052F 0A0511 010000 0A050C 120525 120525 12052F 0A0523 0100F0 0C00BC 010000 0A0504 12052F 0A051F 120525 12052A 010000 0A0504 120525 0F00BD 100000 130000 010000 130000 0E00BD 020001 050000 0C00BD 130000 0E00BC 020001 050000 0C00BC 130000 0F00BD 100000 02000A 080000 130000
