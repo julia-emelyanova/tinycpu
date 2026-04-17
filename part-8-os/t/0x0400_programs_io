@@ -64,9 +64,11 @@ FUNC_PRINT:
         JZ _FUNC_PRINT_LOOP
     _FUNC_PRINT_END:
         RET
-;a function to read user input as a number
-;overflow is NOT checked
-;a result is stores in the register A
+; The function:
+; Reads user input and converts it to a number
+; Does not check for overflow
+; Does not validate non-digit characters
+; Result is stored in register A
 FUNC_READ_NUM:
     CALL FUNC_READ_USER_INPUT
     ;initialize memory cell with array start address
