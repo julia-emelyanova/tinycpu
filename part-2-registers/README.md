@@ -1,7 +1,7 @@
 ## Overengineering a Factorial. Part 2, Registers
 
 This directory contains the **Logisim Evolution circuits** described in the second article of the series *Overengineering a Factorial* —  
-[Overengineering a Factorial. Part 2, Registers](#) *(link coming soon)*
+[Overengineering a Factorial. Part 2, Registers](https://julia-em.dev/notes/cpu-factorial-part-2-registers/)
 
 The circuit consists of two parts.
 
@@ -19,4 +19,4 @@ You can test it by running a program that computes 3 × 3.
 
 This circuit is part of the project:
 
-→ [Overengineering a Factorial](#) *(link coming soon)*
+→ [Overengineering a Factorial](https://julia-em.dev/notes/cpu-factorial/)

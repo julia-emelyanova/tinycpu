@@ -1,6 +1,6 @@
 # Part 1 — ALU
 
-This directory contains the **Logisim Evolution circuits for the ALU** described in the first article of the series *Overengineering a Factorial* - [Overengineering a Factorial. Part 1, The ALU.](#) *(link coming soon)*
+This directory contains the **Logisim Evolution circuits for the ALU** described in the first article of the series *Overengineering a Factorial* - [Overengineering a Factorial. Part 1, The ALU.](https://julia-em.dev/notes/cpu-factorial-part-1-alu/)
 
 The goal of this stage is to build a minimal **Arithmetic Logic Unit** capable of performing several logical and arithmetic operations. This component will later become the computational core of the processor developed in the series.
 
@@ -12,7 +12,7 @@ The circuits here demonstrate:
 
 You can read the full explanation in the article:
 
-→ [Overengineering a Factorial. Part 1, The ALU.](#)*(link coming soon)*
+→ [Overengineering a Factorial. Part 1, The ALU.](https://julia-em.dev/notes/cpu-factorial-part-1-alu/)
 
 ### ALU Specification v0.1
 
@@ -53,4 +53,4 @@ The main circuit:
 
 This circuit is part of the project:
 
-→ [Overengineering a Factorial](#)*(link coming soon)*
+→ [Overengineering a Factorial](https://julia-em.dev/notes/cpu-factorial/)
