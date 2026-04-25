@@ -1,4 +1,4 @@
-## Overengineering a Factorial. Part 5, Control Flow
+## Overengineering a Factorial. Part 6, RAM
 
 This directory contains the **Logisim Evolution circuits** described in the sixth article of the series *Overengineering a Factorial* —  
 [Overengineering a Factorial. Part 6, RAM.](https://julia-em.dev/notes/cpu-factorial-part-6-ram/)
